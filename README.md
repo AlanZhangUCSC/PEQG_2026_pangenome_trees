@@ -1,6 +1,6 @@
 # PanMAN and PanMAP tutorial (PEQG 2026 Pangenome Workshop)
 
-This is a tutorial for building pangenome trees and placing reads or samples onto them using Panmap.
+This tutorial covers building pangenome trees with PanMAN and placing reads or samples onto them using Panmap.
 
 ## Environment setup
 
@@ -56,9 +56,9 @@ panmanUtils -M example_output/sars.subsampled_1000.guide.aln \
   -o sars.subsampled_1000
 ```
 
-The summary stats show that the tree contains 1969 nodes ~26,000 combined mutations (~13 mutations / branch), which is
-within the expected range for 1000 randomly sampled SARS-CoV-2 genomes. This is a small example for the purpose of the
-tutorial. For the rest of the demo, I will use larger, prebuilt PanMANs.
+The summary stats show that the tree contains 1969 nodes and ~26,000 combined mutations (~13 mutations / branch), which 
+is within the expected range for 1000 randomly sampled SARS-CoV-2 genomes. This is a small example for tutorial 
+purposes; the rest of the demo uses larger, prebuilt PanMANs.
 
 <details>
 <summary>Expand to view summary stats</summary>
@@ -91,9 +91,8 @@ sample contains a mix of haplotypes and places each read separately on the tree.
 
 ### Place a single-haplotype sample
 
-**Build a Panmap index.** Panmap sketches [syncmer](https://peerj.com/articles/10805/) seeds of all the genomes in the 
-PanMAN and stores them  compactly in a phylogeny-guided format. Here I'm using a prebuilt SARS-CoV-2 PanMAN containing
-20,000 genomes, spanning the largest 1,000 Pango lineages. Should finish < 5 seconds.
+**Build a Panmap index.** Panmap sketches [syncmer](https://peerj.com/articles/10805/) seeds from all genomes in the 
+PanMAN and stores them compactly in a phylogeny-guided format. This step should finish in under 5 seconds.
 
 ```bash
 panmap input_data/sars_20000_twilight_dipper.panman \
@@ -101,9 +100,10 @@ panmap input_data/sars_20000_twilight_dipper.panman \
   -k 19 -s 8 -l 3
 ```
 
-**Place and genotype a sample.** Panmap scores k-mer similarity between the sample and all the genomes in the PanMAN,
-and picks the most similar genome as the reference genome for downstream alignment and genotyping. Efficiency is
-achieved by updating the similarity scores according to the seed changes instead of scoring every genome from scratch.
+**Place and genotype a sample.** Panmap scores k-mer similarity between the sample and all the genomes in the PanMAN, 
+and picks the most similar genome as the reference genome for downstream alignment and genotyping. Efficiency is 
+achieved by updating the similarity scores incrementally from seed changes along the tree rather than recomputing the 
+similarity scores for each genome.
 
 ```bash
 panmap -i input_data/sars_20000_twilight_dipper.panman.idx \
@@ -135,17 +135,17 @@ log_containment       0.454889   node_7618,node_7619,node_7620,node_7621,node_76
 
 ### Place a metagenomic sample
 
-**Build a Panmap metagenomic index.** Metagenomic mode uses a difference index file, as it needs a little bit
-more information (seed directions, positions, etc.) for per-read placement. Should finish < 5 seconds.
+**Build a Panmap metagenomic index.** Metagenomic mode uses a different index file, since it requires additional
+information (seed directions, positions, etc.) for per-read placement.
 
 ```bash
 panmap input_data/sars_20000_twilight_dipper.panman \
   --index-mgsr input_data/sars_20000_twilight_dipper.panman.meta.idx 
 ```
 
-**Haplotype deconvolution.** Panmap can estimate the haplotype composition of a mixed-strain sample. The example here
-has a SARS-CoV-2 wastewater amplicon sample collected at Point Loma on 1/9/2022. The sample has already been
-preprocessed (trimming, amplicon stack information, etc.). On how to preprocess wastewater samples, please refer to
+**Haplotype deconvolution.** Panmap can estimate the haplotype composition of a mixed-strain sample. The example here 
+uses a SARS-CoV-2 wastewater amplicon sample collected at Point Loma on 1/9/2022.The sample has already been 
+preprocessed (trimming, amplicon stack information, etc.). On how to preprocess wastewater samples, please refer to 
 [Panmap documentation](https://amkram.github.io/panmap/metagenomic.html).
 
 ```bash
@@ -169,8 +169,9 @@ bash scripts/get_lineages.sh \
   --output example_output/SRR19707934.lineages.tsv
 ```
 
-The lineage abundance file shows that the sample is predominantly Omicron lineages: BA.1.1, with a small amount of
-BA.1.15, BA.1, BA.1.18, which is consistent with the clinical submissions around the same time.
+The lineage abundance file shows that the sample is predominantly composed of Omicron lineages, with BA.1.1 as the major 
+component and smaller fractions of BA.1.15, BA.1, and BA.1.18. This is consistent with the clinical submissions around 
+the same time.
 
 <details>
 <summary>Expand to view the haplotype and lineage abundance file </summary>
@@ -210,6 +211,76 @@ BA.1.13    0.00524
 
 </details>
 
+<br>
 
-**Reads assignment/placement.** Panmap 
+**Reads assignment/placement.** Panmap can also place reads onto the tree using a competitive mapping like approach,   
+with specific applications in eDNA assignment. Here we use a prebuilt vertebrate mitochondrial genome PanMAN containing  
+ ~15k genomes, across ~8k species. The read sample contains 1,000,000 subsampled reads from permafrost and lake  
+sediment samples collected across the Arctic by [Wang et al. 2021](https://www.nature.com/articles/s41586-021-04016-x). 
+The original study reported strong megafauna signals,  particularly from mammoths.
 
+```bash
+# Build a Panmap index
+panmap input_data/v_mtdna.panman \
+  --index-mgsr input_data/v_mtdna.panman.meta.idx \
+  -k 15 -s 8 -l 1
+
+# Run with filter-and-assign setting
+panmap input_data/v_mtdna.panman \
+  input_data/subsampled.fastq.gz \
+  --meta \
+  --index input_data/v_mtdna.panman.meta.idx \
+  --filter-and-assign \
+  --discard 0.6 --dust 5 \
+  --taxonomic-metadata input_data/v_mtdna.meta.tsv \
+  --output example_output/subsampled
+```
+
+As expected, a distinct cluster of reads is assigned to the Elephantidae node, consistent with the original study.
+
+<details>
+<summary>Expand to view read assignment results</summary>
+
+```console
+$ sort -k3,3 -gr example_output/subsampled.mgsr.assignedReads.out  | column -t
+node_14404,NC_007596.2,DQ188829.2             Elephantidae    21  1,2,3,4,6,15,18,25,26,27,28,29,30,31,32,33,34,35,36,38,39
+node_14402,JF912199.1,node_14403,NC_015529.1  Elephantidae    18  1,2,3,4,15,18,25,26,27,28,29,30,31,32,33,34,35,36
+node_14400                                    Elephantidae    6   1,2,3,4,6,15
+node_14399                                    Elephantidae    6   1,2,3,4,6,15
+node_14401,NC_005129.2,DQ316068.1             Elephantidae    5   1,3,4,6,38
+node_14409,KY499555.1,NC_035230.1             Elephantidae    4   2,3,4,18
+node_14407                                    Elephantidae    4   2,3,4,18
+node_14406,AJ224821.1,NC_000934.1             Elephantidae    4   1,2,3,4
+node_14405                                    Elephantidae    4   1,2,3,4
+node_14408,NC_020759.1,JN673264.1             Elephantidae    3   2,3,4
+node_14398                                    Elephantidae    3   1,2,6
+node_14410,KY364233.1,NC_035800.1             Elephantidae    2   1,2
+node_9733                                     Kyphosidae      1   21
+node_94,MN977920.1,NC_050664.1                Scincidae       1   19
+node_7761,NC_081957.1,OR066216.1              Gobiidae        1   11
+node_7521,MG321595.1,NC_037248.1              Stomiidae       1   20
+node_7142,NC_068841.1,ON005612.1              Myctophidae     1   14
+node_6963                                     Gonorynchidae   1   16
+node_6633,NC_082182.1,OM960959.1              Pegasidae       1   7
+node_5832,KP013104.1,NC_028291.1              Leuciscidae     1   5
+node_4765,OQ603602.1,NC_077583.1              Nemacheilidae   1   9
+node_4735                                     Nemacheilidae   1   10
+node_4314,NC_031600.1,AP011347.1              Botiidae        1   8
+node_4313                                     Botiidae        1   8
+node_4312                                     Botiidae        1   8
+node_4311                                     Botiidae        1   8
+node_356,NC_012443.1,EF222190.1               Chamaeleonidae  1   13
+node_3252,NC_039135.1,AP018342.1              Notacanthidae   1   12
+node_14456,NC_028563.1,KT818536.1             Chlamyphoridae  1   0
+node_12279,NC_020154.1,AY954504.1             Herpelidae      1   37
+node_12060                                    Plethodontidae  1   17
+node_12031,MN259079.1,NC_044873.1             Pipidae         1   24
+node_11280                                    Dicroglossidae  1   23
+node_11279                                    Dicroglossidae  1   23
+node_11144                                    Megophryidae    1   22
+```
+
+
+</details>
+
+<br>
