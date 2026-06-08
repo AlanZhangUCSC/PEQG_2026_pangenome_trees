@@ -2,6 +2,14 @@
 
 This tutorial covers building pangenome trees with PanMAN and placing reads or samples onto them using Panmap.
 
+[1. Environment setup](#environment-setup)
+
+[2. Build a PanMAN from raw sequences](#step-1-build-a-panman)
+
+[3. Use Panmap to place a clonal sample](#place-a-single-haplotype-sample)
+
+[4. Use Panmap to place a metagenomic sample](#place-a-metagenomic-sample)
+
 ## Environment setup
 
 All programs used in this tutorial can be installed using conda: [Panmap](https://github.com/amkram/panmap), 
