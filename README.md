@@ -213,10 +213,10 @@ BA.1.13    0.00524
 
 <br>
 
-**Reads assignment/placement.** Panmap can also place reads onto the tree using a competitive mapping like approach,   
-with specific applications in eDNA assignment. Here we use a prebuilt vertebrate mitochondrial genome PanMAN containing  
- ~15k genomes, across ~8k species. The read sample contains 1,000,000 subsampled reads from permafrost and lake  
-sediment samples collected across the Arctic by [Wang et al. 2021](https://www.nature.com/articles/s41586-021-04016-x). 
+**Reads assignment/placement.** Panmap can also place reads onto the tree using a competitive mapping like approach,
+with specific applications in eDNA assignment. Here we use a prebuilt vertebrate mitochondrial genome PanMAN containing
+~15k genomes, across ~8k species. The read sample contains 1,000,000 subsampled reads from permafrost and lake
+sediment samples collected across the Arctic by [Wang et al. 2021](https://www.nature.com/articles/s41586-021-04016-x).
 The original study reported strong megafauna signals,  particularly from mammoths.
 
 ```bash
