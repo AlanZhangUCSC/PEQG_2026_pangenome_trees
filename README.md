@@ -117,6 +117,7 @@ similarity scores for each genome.
 panmap -i input_data/sars_20000_twilight_dipper.panman.idx \
   input_data/sars_20000_twilight_dipper.panman \
   input_data/isolate_R1.fastq.gz input_data/isolate_R2.fastq.gz \
+  --stop consensus
   -o example_output/isolate
 ```
 
