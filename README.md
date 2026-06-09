@@ -160,8 +160,8 @@ preprocessed (trimming, amplicon stack information, etc.). On how to preprocess 
 ```bash
 panmap input_data/sars_20000_twilight_dipper.panman \
   input_data/SRR19707934.trimmed.fastq \
-  --meta \
   --index input_data/sars_20000_twilight_dipper.panman.meta.idx \
+  --meta \
   --amplicon-depth input_data/SRR19707934.amplicon_stacks.tsv \
   --mask-reads-relative-frequency 0.01 \
   --em-delta-threshold 0.00001 \
