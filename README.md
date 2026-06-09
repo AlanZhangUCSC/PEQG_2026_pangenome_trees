@@ -168,23 +168,11 @@ panmap input_data/sars_20000_twilight_dipper.panman \
   --output example_output/SRR19707934 
 ```
 
-This outputs a .mgsr.abundance.out file containing the haplotype abundance for each sample. To get the lineage
-proportions, we can post-process the file using a custom script and Pangolin.
-
-```bash
-bash scripts/get_lineages.sh \
-  --abundance example_output/SRR19707934.mgsr.abundance.out \
-  --panman input_data/sars_20000_twilight_dipper.panman \
-  --output example_output/SRR19707934.lineages.tsv
-```
-
-The lineage abundance file shows that the sample is predominantly composed of Omicron lineages, with BA.1.1 as the major 
-component and smaller fractions of BA.1.15, BA.1, and BA.1.18. This is consistent with the clinical submissions around 
-the same time.
+This outputs a .mgsr.abundance.out file containing the haplotype abundance for each sample.
 
 <details>
-<summary>Expand to view the haplotype and lineage abundance file </summary>
-
+<summary>Expand to view the haplotype abundance file </summary>
+  
 Haplotype abundance:
 
 ```console
@@ -201,6 +189,25 @@ node_8020                                            0.02451
 USA/VI-CDC-2-5383947/2021|OM338536.1|2021-12-28      0.01887
 ```
 
+</details>
+
+<br>
+
+To get the lineage proportions, we can post-process the file using a custom script and Pangolin.
+
+```bash
+bash scripts/get_lineages.sh \
+  --abundance example_output/SRR19707934.mgsr.abundance.out \
+  --panman input_data/sars_20000_twilight_dipper.panman \
+  --output example_output/SRR19707934.lineages.tsv
+```
+
+The lineage abundance file shows that the sample is predominantly composed of Omicron lineages, with BA.1.1 as the major 
+component and smaller fractions of BA.1.15, BA.1, and BA.1.18. This is consistent with the clinical submissions around 
+the same time.
+
+<details>
+<summary>Expand to view the lineage abundance file </summary>
 Lineage abundance:
 
 ```console
