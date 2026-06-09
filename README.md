@@ -153,7 +153,7 @@ panmap input_data/sars_20000_twilight_dipper.panman \
 ```
 
 **Haplotype deconvolution.** Panmap can estimate the haplotype composition of a mixed-strain sample. The example here 
-uses a SARS-CoV-2 wastewater amplicon sample collected at Point Loma on 1/9/2022.The sample has already been 
+uses a SARS-CoV-2 wastewater amplicon sample collected at Point Loma on 1/9/2022 by [Karthikeyan et al.](https://www.nature.com/articles/s41586-022-05049-6).The sample has already been 
 preprocessed (trimming, amplicon stack information, etc.). On how to preprocess wastewater samples, please refer to 
 [Panmap documentation](https://amkram.github.io/panmap/metagenomic.html).
 
