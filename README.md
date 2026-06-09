@@ -244,8 +244,8 @@ panmap input_data/v_mtdna.panman \
 # Run with filter-and-assign setting
 panmap input_data/v_mtdna.panman \
   input_data/subsampled.fastq.gz \
-  --meta \
   --index input_data/v_mtdna.panman.meta.idx \
+  --meta \
   --filter-and-assign \
   --discard 0.6 --dust 5 \
   --taxonomic-metadata input_data/v_mtdna.meta.tsv \
